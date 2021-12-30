@@ -1,0 +1,8 @@
+name: '${name}'
+version: '${version}'
+main: '${group}.${name}'
+api-version: 1.17
+load: STARTUP
+loadbefore: [ Multiverse-Core, Multiworld ]
+author: '${author}'
+website: '${website}'
