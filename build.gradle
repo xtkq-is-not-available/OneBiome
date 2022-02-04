@@ -13,10 +13,24 @@ plugins {
     id 'java'
 }
 
-group = project.plugin_group
-version = project.plugin_version
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+group = project.plugin_group as Object
+version = project.plugin_version as Object
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
 
 repositories {
     mavenCentral()
@@ -31,20 +45,16 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'org.spigotmc', name: 'spigot-api', version: '1.17.1-R0.1-SNAPSHOT'
-}
-
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = "UTF-8"
+//    implementation 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
+    implementation group: 'org.spigotmc', name: 'spigot-api', version: '1.18.1-R0.1-SNAPSHOT'
 }
 
 processResources {
-    def props = [version: project.plugin_version, group: project.plugin_group, name: project.plugin_name, author: project.plugin_author, website: project.plugin_website]
-    inputs.properties props
+    def properties = [version: project.plugin_version, group: project.plugin_group, name: project.plugin_name, author: project.plugin_author, website: project.plugin_website]
+    inputs.properties properties
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {
-        expand props
+        expand properties
     }
 }
 

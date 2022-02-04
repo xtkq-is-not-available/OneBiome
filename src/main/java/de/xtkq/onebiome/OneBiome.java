@@ -9,18 +9,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class OneBiome extends JavaPlugin {
 
-    private static OneBiome oneBiome;
     private static EventManager eventManager;
 
     @Override
     public BiomeProvider getDefaultBiomeProvider(String worldName, String id) {
-        return new OneBiomeProvider(id);
+        return new OneBiomeProvider(this, id);
     }
 
     @Override
     public void onEnable() {
-        oneBiome = this;
-
         SettingsManager settingsManager = new SettingsManager(this);
         UpdateUtils updateUtils = new UpdateUtils(this);
         eventManager = new EventManager(this);
@@ -36,10 +33,5 @@ public final class OneBiome extends JavaPlugin {
     public void onDisable() {
         this.getServer().getScheduler().cancelTasks(this);
         eventManager.terminate();
-        oneBiome = null;
-    }
-
-    public static OneBiome getOneBiome(){
-        return oneBiome;
     }
 }
